@@ -2,12 +2,8 @@ import time
 import math
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -29,10 +25,12 @@ height = driver.get_window_size()["height"]
 
 for size in sizes:
     driver.set_window_size(size, height)
+    driver.execute_script("window.scrollTo(0, 0)")
     time.sleep(1.5)
     # return JS -> Python
     scroll_size = driver.execute_script("return document.body.scrollHeight")
     total_sections = math.ceil(scroll_size / height)
-    for section in range(total_sections):
-        driver.execute_script(f"window.scrollTo(0, {(section + 1) * height})")
-        time.sleep(1)
+    for section in range(total_sections + 1):
+        driver.execute_script(f"window.scrollTo(0, {(section) * height})")
+        driver.save_screenshot(f"screenshots/{size}_{section}.png")
+        time.sleep(0.5)
