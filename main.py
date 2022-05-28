@@ -1,4 +1,5 @@
 import time
+import math
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -20,10 +21,18 @@ driver = webdriver.Chrome(
 driver.get("https://nomadcoders.co")
 driver.maximize_window()
 
-sizes = [320, 480, 720, 1024, 1440]
+# Check Lists
+sizes = [480, 960, 1440]
 
-height = driver.get_window_size()["height"]  # 790
+# Device screen height 790
+height = driver.get_window_size()["height"]
 
 for size in sizes:
     driver.set_window_size(size, height)
     time.sleep(1.5)
+    # return JS -> Python
+    scroll_size = driver.execute_script("return document.body.scrollHeight")
+    total_sections = math.ceil(scroll_size / height)
+    for section in range(total_sections):
+        driver.execute_script(f"window.scrollTo(0, {(section + 1) * height})")
+        time.sleep(1)
